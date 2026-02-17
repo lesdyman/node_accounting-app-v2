@@ -8,12 +8,12 @@ const createUserControllers = (usersService) => {
   const getById = (req, res) => {
     const { id } = req.params;
 
-    if (isNaN(id)) {
-      return res.status(422).json({ error: 'Invalid user ID' });
+    if (!id) {
+      return res.status(400).json({ error: 'ID is required' });
     }
 
-    if (!id) {
-      return res.status(422).json({ error: 'User ID is required' });
+    if (Number.isNaN(Number(id))) {
+      return res.status(400).json({ error: 'ID must be a number' });
     }
 
     const user = usersService.getUserById(Number(id));
@@ -21,8 +21,7 @@ const createUserControllers = (usersService) => {
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-    res.status(200);
-    res.json(user);
+    res.status(200).json(user);
   };
 
   const create = (req, res) => {
@@ -41,16 +40,16 @@ const createUserControllers = (usersService) => {
     const { id } = req.params;
     const { name } = req.body;
 
-    if (isNaN(id)) {
-      return res.status(422).json({ error: 'Invalid user ID' });
-    }
-
     if (!id) {
-      return res.status(422).json({ error: 'User ID is required' });
+      return res.status(400).json({ error: 'User ID is required' });
     }
 
-    if (!name) {
-      return res.status(422).json({ error: 'User name is required' });
+    if (Number.isNaN(Number(id))) {
+      return res.status(400).json({ error: 'Invalid user ID' });
+    }
+
+    if (typeof name !== 'string') {
+      return res.status(400).json({ error: 'Name is required' });
     }
 
     const changedUser = usersService.updateUser(Number(id), name);
@@ -62,40 +61,15 @@ const createUserControllers = (usersService) => {
     res.status(200).json(changedUser);
   };
 
-  const rewrite = (req, res) => {
-    const { id } = req.params;
-    const { name } = req.body;
-
-    if (isNaN(id)) {
-      return res.status(422).json({ error: 'Invalid user ID' });
-    }
-
-    if (!id) {
-      return res.status(422).json({ error: 'User ID is required' });
-    }
-
-    if (!name) {
-      return res.status(422).json({ error: 'User name is required' });
-    }
-
-    const changedUser = usersService.rewriteUser(Number(id), name);
-
-    if (!changedUser) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-
-    res.status(200).json(changedUser);
-  };
-
   const deleteUser = (req, res) => {
     const { id } = req.params;
 
-    if (isNaN(id)) {
-      return res.status(422).json({ error: 'Invalid user ID' });
+    if (!id) {
+      return res.status(400).json({ error: 'ID is required' });
     }
 
-    if (!id) {
-      return res.status(422).json({ error: 'User ID is required' });
+    if (Number.isNaN(Number(id))) {
+      return res.status(400).json({ error: 'ID must be a number' });
     }
 
     const deletedUser = usersService.deleteUser(Number(id));
@@ -112,7 +86,6 @@ const createUserControllers = (usersService) => {
     getById,
     create,
     update,
-    rewrite,
     deleteUser,
   };
 };

@@ -14,8 +14,6 @@ const createUserRouter = (usersService) => {
 
   router.patch('/:id', userControllers.update);
 
-  router.put('/:id', userControllers.rewrite);
-
   router.delete('/:id', userControllers.deleteUser);
 
   return router;

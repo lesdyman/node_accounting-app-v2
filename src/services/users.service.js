@@ -2,9 +2,9 @@ const createUserService = () => {
   const users = [];
   let idIndex = 1;
 
-  const getAllUsers = () => users;
+  const getAllUsers = () => [...users];
 
-  const getUserById = (id) => users.find((u) => u.id === id);
+  const getUserById = (id) => users.find((u) => u.id === Number(id)) || null;
 
   const addUser = (name) => {
     const newUser = {
@@ -18,7 +18,7 @@ const createUserService = () => {
   };
 
   const updateUser = (id, name) => {
-    const user = getUserById(id);
+    const user = getUserById(Number(id));
 
     if (!user) {
       return null;
@@ -32,7 +32,7 @@ const createUserService = () => {
   };
 
   const deleteUser = (id) => {
-    const userIndex = users.findIndex((u) => u.id === id);
+    const userIndex = users.findIndex((u) => u.id === Number(id));
 
     if (userIndex === -1) {
       return false;
@@ -43,27 +43,12 @@ const createUserService = () => {
     return true;
   };
 
-  const rewriteUser = (id, name) => {
-    const userIndex = users.findIndex((u) => u.id === id);
-
-    if (userIndex === -1) {
-      return null;
-    }
-
-    const changedUser = { id, name };
-
-    users[userIndex] = changedUser;
-
-    return changedUser;
-  };
-
   return {
     getAllUsers,
     getUserById,
     addUser,
     updateUser,
     deleteUser,
-    rewriteUser,
   };
 };
 

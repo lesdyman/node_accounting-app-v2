@@ -3,8 +3,13 @@ const createExpenseService = (usersService) => {
   let indexCounter = 1;
 
   const getFilteredExpenses = (filters) => {
-    const { userId, categories, from, to } = filters;
+    const { userId, from, to } = filters;
+    let { categories } = filters;
     let filteredExpenses = [...expenses];
+
+    if (typeof categories === 'string') {
+      categories = [categories];
+    }
 
     if (userId) {
       filteredExpenses = filteredExpenses.filter(
@@ -34,9 +39,7 @@ const createExpenseService = (usersService) => {
   };
 
   const getExpenseById = (id) => {
-    const expense = expenses.find((e) => e.id === Number(id));
-
-    return expense || null;
+    return expenses.find((e) => e.id === Number(id)) || null;
   };
 
   const addExpense = (expense) => {
@@ -49,10 +52,10 @@ const createExpenseService = (usersService) => {
 
     const newExpense = {
       id: indexCounter++,
-      userId,
+      userId: Number(userId),
       spentAt,
       title,
-      amount,
+      amount: Number(amount),
       category,
       note,
     };
@@ -63,10 +66,24 @@ const createExpenseService = (usersService) => {
   };
 
   const updateExpense = (id, updates) => {
-    const expense = getExpenseById(id);
+    const expense = getExpenseById(Number(id));
 
     if (!expense) {
       return null;
+    }
+
+    if (updates.userId !== undefined) {
+      const user = usersService.getUserById(Number(updates.userId));
+
+      if (!user) {
+        return null;
+      }
+
+      updates.userId = Number(updates.userId);
+    }
+
+    if (updates.amount !== undefined) {
+      updates.amount = Number(updates.amount);
     }
 
     Object.assign(expense, updates);
@@ -74,35 +91,11 @@ const createExpenseService = (usersService) => {
     return expense;
   };
 
-  const rewriteExpense = (id, newExpense) => {
-    const expenseIndex = expenses.findIndex((e) => e.id === Number(id));
-
-    if (expenseIndex === -1) {
-      return null;
-    }
-
-    const { userId, spentAt, title, amount, category, note } = newExpense;
-
-    const changedExpense = {
-      id: Number(id),
-      userId,
-      spentAt,
-      title,
-      amount,
-      category,
-      note,
-    };
-
-    expenses[expenseIndex] = changedExpense;
-
-    return changedExpense;
-  };
-
   const deleteExpense = (id) => {
     const expenseIndex = expenses.findIndex((e) => e.id === Number(id));
 
     if (expenseIndex === -1) {
-      return null;
+      return false;
     }
 
     expenses.splice(expenseIndex, 1);
@@ -115,7 +108,6 @@ const createExpenseService = (usersService) => {
     getExpenseById,
     addExpense,
     updateExpense,
-    rewriteExpense,
     deleteExpense,
   };
 };

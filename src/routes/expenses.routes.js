@@ -11,8 +11,6 @@ const createExpenseRouter = (expenseControllers) => {
 
   router.patch('/:id', expenseControllers.update);
 
-  router.put('/:id', expenseControllers.rewrite);
-
   router.delete('/:id', expenseControllers.remove);
 
   return router;

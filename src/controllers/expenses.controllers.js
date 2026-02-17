@@ -1,6 +1,11 @@
 const createExpenseControllers = (expensesService) => {
   const get = (req, res) => {
-    const { userId, categories, from, to } = req.query;
+    const { userId, from, to } = req.query;
+    let { categories } = req.query;
+
+    if (typeof categories === 'string') {
+      categories = [categories];
+    }
 
     const filteredExpenses = expensesService.getFilteredExpenses({
       userId,
@@ -14,6 +19,14 @@ const createExpenseControllers = (expensesService) => {
 
   const getById = (req, res) => {
     const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ error: 'ID is required' });
+    }
+
+    if (Number.isNaN(Number(id))) {
+      return res.status(400).json({ error: 'ID must be a number' });
+    }
 
     const expense = expensesService.getExpenseById(Number(id));
 
@@ -50,6 +63,14 @@ const createExpenseControllers = (expensesService) => {
   const update = (req, res) => {
     const { id } = req.params;
 
+    if (!id) {
+      return res.status(400).json({ error: 'ID is required' });
+    }
+
+    if (Number.isNaN(Number(id))) {
+      return res.status(400).json({ error: 'ID must be a number' });
+    }
+
     const allowedFields = [
       'userId',
       'spentAt',
@@ -76,32 +97,16 @@ const createExpenseControllers = (expensesService) => {
     res.status(200).json(updatedExpense);
   };
 
-  const rewrite = (req, res) => {
-    const { id } = req.params;
-    const { userId, spentAt, title, amount, category, note } = req.body;
-
-    if (!userId || !spentAt || !title || !amount || !category || !note) {
-      return res.status(422).json({ error: 'All fields are required' });
-    }
-
-    const changedExpense = expensesService.rewriteExpense(Number(id), {
-      userId,
-      spentAt,
-      title,
-      amount,
-      category,
-      note,
-    });
-
-    if (!changedExpense) {
-      return res.status(400).json({ error: 'Invalid user ID' });
-    }
-
-    res.status(200).json(changedExpense);
-  };
-
   const remove = (req, res) => {
     const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ error: 'ID is required' });
+    }
+
+    if (Number.isNaN(Number(id))) {
+      return res.status(400).json({ error: 'ID must be a number' });
+    }
 
     const deleted = expensesService.deleteExpense(Number(id));
 
@@ -117,7 +122,6 @@ const createExpenseControllers = (expensesService) => {
     getById,
     add,
     update,
-    rewrite,
     remove,
   };
 };
