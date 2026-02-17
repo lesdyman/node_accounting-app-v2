@@ -8,7 +8,7 @@ const createUserControllers = (usersService) => {
   const getById = (req, res) => {
     const { id } = req.params;
 
-    if (!id) {
+    if (id == null) {
       return res.status(400).json({ error: 'ID is required' });
     }
 
@@ -40,7 +40,7 @@ const createUserControllers = (usersService) => {
     const { id } = req.params;
     const { name } = req.body;
 
-    if (!id) {
+    if (id == null) {
       return res.status(400).json({ error: 'User ID is required' });
     }
 
@@ -48,7 +48,7 @@ const createUserControllers = (usersService) => {
       return res.status(400).json({ error: 'Invalid user ID' });
     }
 
-    if (typeof name !== 'string') {
+    if (!name || typeof name !== 'string') {
       return res.status(400).json({ error: 'Name is required' });
     }
 
@@ -64,7 +64,7 @@ const createUserControllers = (usersService) => {
   const deleteUser = (req, res) => {
     const { id } = req.params;
 
-    if (!id) {
+    if (id == null) {
       return res.status(400).json({ error: 'ID is required' });
     }
 

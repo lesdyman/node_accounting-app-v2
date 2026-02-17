@@ -65,6 +65,10 @@ const createExpenseService = (usersService) => {
     return newExpense;
   };
 
+  const getUserExists = (userId) => {
+    return usersService.getUserById(Number(userId));
+  };
+
   const updateExpense = (id, updates) => {
     const expense = getExpenseById(Number(id));
 
@@ -73,12 +77,6 @@ const createExpenseService = (usersService) => {
     }
 
     if (updates.userId !== undefined) {
-      const user = usersService.getUserById(Number(updates.userId));
-
-      if (!user) {
-        return null;
-      }
-
       updates.userId = Number(updates.userId);
     }
 
@@ -107,6 +105,7 @@ const createExpenseService = (usersService) => {
     getFilteredExpenses,
     getExpenseById,
     addExpense,
+    getUserExists,
     updateExpense,
     deleteExpense,
   };

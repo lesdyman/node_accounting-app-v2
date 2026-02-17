@@ -20,7 +20,7 @@ const createExpenseControllers = (expensesService) => {
   const getById = (req, res) => {
     const { id } = req.params;
 
-    if (!id) {
+    if (id == null) {
       return res.status(400).json({ error: 'ID is required' });
     }
 
@@ -40,7 +40,14 @@ const createExpenseControllers = (expensesService) => {
   const add = (req, res) => {
     const { userId, spentAt, title, amount, category, note } = req.body;
 
-    if (!userId || !spentAt || !title || !amount || !category || !note) {
+    if (
+      userId == null ||
+      spentAt == null ||
+      title == null ||
+      amount == null ||
+      category == null ||
+      note == null
+    ) {
       return res.status(400).json({ error: 'All fields are required' });
     }
 
@@ -63,7 +70,7 @@ const createExpenseControllers = (expensesService) => {
   const update = (req, res) => {
     const { id } = req.params;
 
-    if (!id) {
+    if (id == null) {
       return res.status(400).json({ error: 'ID is required' });
     }
 
@@ -88,6 +95,14 @@ const createExpenseControllers = (expensesService) => {
       }
     }
 
+    if (updates.userId !== undefined) {
+      const user = expensesService.getUserExists(updates.userId);
+
+      if (!user) {
+        return res.status(400).json({ error: 'Invalid user ID' });
+      }
+    }
+
     const updatedExpense = expensesService.updateExpense(Number(id), updates);
 
     if (!updatedExpense) {
@@ -100,7 +115,7 @@ const createExpenseControllers = (expensesService) => {
   const remove = (req, res) => {
     const { id } = req.params;
 
-    if (!id) {
+    if (id == null) {
       return res.status(400).json({ error: 'ID is required' });
     }
 
